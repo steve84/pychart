@@ -23,13 +23,15 @@ def createCandlestick(
         xtick_position='right', plots=[], lines=[], cones=[],
         hscaling=1, vscaling=1):
 
+    sb.set()
+
     fig, axes = plt.subplots(1, 1, squeeze=False)
 
     column_subset = list()
     column_subset.append(date_column)
     column_subset = column_subset + [ 'Open', 'High', 'Low', 'Close']
 
-    candlestick_data = data.loc[:, column_subset].values
+    candlestick_data = data[column_subset].values
     candlestick_data = candlestick_data.astype(float)
     weekday_data = [tuple([i] + list(quote[1:]))
                     for i, quote in enumerate(candlestick_data)]
