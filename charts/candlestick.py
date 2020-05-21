@@ -18,14 +18,41 @@ def findIndexByDate(data, dateStr):
     return None
 
 
+def createVolumeSubplot(
+    data, axis, date_column, xtick_rotation=45, xtick_position='right'):
+
+    column_subset = list()
+    column_subset.append(date_column)
+    column_subset.append('Volume')
+
+    volume_data = data[column_subset].values
+    volume_data = volume_data.astype(float)
+    volume_weekday_data = [tuple([i] + list(quote[1:]))
+                            for i, quote in enumerate(volume_data)]
+    axis.bar(
+        [d[0] for d in volume_weekday_data],
+        [d[1] for d in volume_weekday_data])
+
+    axis.set_xticks(range(0, len(volume_weekday_data), 5))
+    axis.set_xticklabels([mpl_dates.num2date(volume_data[index][0]).strftime(
+        date_format) for index in axis.get_xticks()])
+    axis.set_xticklabels(
+        axis.get_xticklabels(), rotation=xtick_rotation, ha=xtick_position)
+
+
 def createCandlestick(
         data, filename, date_column, xtick_rotation=45,
         xtick_position='right', plots=[], lines=[], cones=[],
-        hscaling=1, vscaling=1):
+        volume=False, hscaling=1, vscaling=1):
 
     sb.set()
 
-    fig, axes = plt.subplots(1, 1, squeeze=False)
+    if volume:
+        fig, axes = plt.subplots(
+            2, 1, squeeze=False, gridspec_kw={'height_ratios': [2, 1]})
+    else:
+        fig, axes = plt.subplots(
+            1, 1, squeeze=False)
 
     column_subset = list()
     column_subset.append(date_column)
@@ -38,6 +65,9 @@ def createCandlestick(
 
     candlestick_ohlc(axes[0][0], weekday_data, width=0.6,
                      colorup='green', colordown='red', alpha=0.8)
+
+    if volume:
+        createVolumeSubplot(data, axes[1][0], date_column)
 
     for plot in plots:
         sb.lineplot([x[0] for x in weekday_data], data[plot], ax=axes[0][0])
@@ -54,11 +84,14 @@ def createCandlestick(
         y2 = np.linspace(cone[2][0], cone[2][1], len(t))
         axes[0][0].fill_between(t, y1, y2, facecolor=cone[3], alpha=0.2)
 
-    axes[0][0].set_xticks(range(0, len(weekday_data), 5))
-    axes[0][0].set_xticklabels([mpl_dates.num2date(candlestick_data[index][0]).strftime(
-        date_format) for index in axes[0][0].get_xticks()])
-    axes[0][0].set_xticklabels(
-        axes[0][0].get_xticklabels(), rotation=xtick_rotation, ha=xtick_position)
+    if volume:
+        axes[0][0].set_xticklabels([])
+    else:
+        axes[0][0].set_xticks(range(0, len(weekday_data), 5))
+        axes[0][0].set_xticklabels([mpl_dates.num2date(candlestick_data[index][0]).strftime(
+            date_format) for index in axes[0][0].get_xticks()])
+        axes[0][0].set_xticklabels(
+            axes[0][0].get_xticklabels(), rotation=xtick_rotation, ha=xtick_position)
 
     fig.set_size_inches(
         np.array([
