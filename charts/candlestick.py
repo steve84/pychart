@@ -12,8 +12,8 @@ date_format = '%d.%m.%Y'
 def findIndexByDate(data, dateStr):
     dt = datetime.strptime(dateStr, date_format)
     ndt = mpl_dates.date2num(dt)
-    for i in range(0, len(data) - 1):
-        if ndt >= data[i][0] and ndt <= data[i+1][0]:
+    for i in range(0, len(data)):
+        if ndt == data[i][0] or (i < len(data) - 1 and ndt > data[i][0] and ndt < data[i+1][0]):
             return i
     return None
 
@@ -43,7 +43,7 @@ def createVolumeSubplot(
 def createCandlestick(
         data, filename, date_column, xtick_rotation=45,
         xtick_position='right', plots=[], lines=[], cones=[],
-        volume=False, hscaling=1, vscaling=1):
+        markers=[], volume=False, hscaling=1, vscaling=1):
 
     sb.set()
 
@@ -83,6 +83,11 @@ def createCandlestick(
         y1 = np.linspace(cone[1][0], cone[1][1], len(t))
         y2 = np.linspace(cone[2][0], cone[2][1], len(t))
         axes[0][0].fill_between(t, y1, y2, facecolor=cone[3], alpha=0.2)
+
+    for marker in markers:
+        t = findIndexByDate(candlestick_data, marker[0])
+        i = column_subset.index(marker[1])
+        axes[0][0].scatter(t, candlestick_data[t][i] * marker[2], color=marker[3], marker=marker[4])
 
     if volume:
         axes[0][0].set_xticklabels([])
