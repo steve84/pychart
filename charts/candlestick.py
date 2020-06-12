@@ -43,7 +43,8 @@ def createVolumeSubplot(
 def createCandlestick(
         data, filename, date_column, xtick_rotation=45,
         xtick_position='right', plots=[], lines=[], cones=[],
-        markers=[], volume=False, hscaling=1, vscaling=1):
+        markers=[], annotations=[], volume=False,
+        hscaling=1, vscaling=1):
 
     sb.set()
 
@@ -88,6 +89,11 @@ def createCandlestick(
         t = findIndexByDate(candlestick_data, marker[0])
         i = column_subset.index(marker[1])
         axes[0][0].scatter(t, candlestick_data[t][i] * marker[2], color=marker[3], marker=marker[4])
+
+    for annotation in annotations:
+        t = findIndexByDate(candlestick_data, annotation[0])
+        i = column_subset.index(annotation[1])
+        axes[0][0].annotate(annotation[3], (t, candlestick_data[t][i] * annotation[2]))
 
     if volume:
         axes[0][0].set_xticklabels([])
