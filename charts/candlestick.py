@@ -42,8 +42,9 @@ def createVolumeSubplot(
 
 def createCandlestick(
         data, filename, date_column, xtick_rotation=45,
-        xtick_position='right', plots=[], lines=[], cones=[],
-        markers=[], annotations=[], volume=False,
+        title=None, xlabel=None, ylabel=None,
+        xtick_position='right', plots=[], lines=[],
+        cones=[], markers=[], annotations=[], volume=False,
         hscaling=1, vscaling=1):
 
     sb.set()
@@ -103,6 +104,13 @@ def createCandlestick(
             date_format) for index in axes[0][0].get_xticks()])
         axes[0][0].set_xticklabels(
             axes[0][0].get_xticklabels(), rotation=xtick_rotation, ha=xtick_position)
+
+    if title is not None:
+        axes[0][0].set_title(title)
+    if xlabel is not None:
+        axes[0][0].set_xlabel(xlabel)
+    if ylabel is not None:
+        axes[0][0].set_ylabel(ylabel)
 
     fig.set_size_inches(
         np.array([

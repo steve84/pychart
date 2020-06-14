@@ -6,6 +6,6 @@ def createLine(
                volume=False, figratio=(16, 9), figscale=1.25):
 
     mpf.plot(data, addplot=add_plots, type='line',
-             title=title, ylabel=ylabel,
+             linecolor='#663300', title=title, ylabel=ylabel,
              volume=volume, savefig=filename,
              figratio=figratio, figscale=figscale)
